@@ -94,7 +94,8 @@ class MultiHeadAttentionBlock(nn.Module):
     ) -> tuple[torch.Tensor, torch.Tensor]:
         scores = (query @ key.transpose(-2, -1)) / math.sqrt(d_k)
         if mask is not None:
-            scores = scores.masked_fill(mask == 0, -1e9)
+            # -1e9 overflows in float16 under AMP; use dtype-safe minimum
+            scores = scores.masked_fill(mask == 0, torch.finfo(scores.dtype).min)
         scores = scores.softmax(dim=-1)
         if dropout is not None:
             scores = dropout(scores)
