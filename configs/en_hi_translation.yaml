@@ -1,0 +1,60 @@
+# English -> Hindi translation (Helsinki-NLP/opus-100 en-hi)
+# Tuned for ~16GB GPU: batch_size=8, seq_len=450
+
+seed: 42
+
+model:
+  d_model: 512
+  num_layers: 6
+  num_heads: 8
+  d_ff: 2048
+  dropout: 0.1
+  seq_len: 450
+
+data:
+  dataset_name: Helsinki-NLP/opus-100
+  lang_src: en
+  lang_tgt: hi
+  train_split_ratio: 0.9
+  batch_size: 8
+  num_workers: 2
+
+training:
+  num_epochs: 20
+  lr: 0.0001
+  label_smoothing: 0.1
+  amp: true
+  grad_clip: 1.0
+  val_every_n_steps: 500
+  val_num_examples: 2
+  save_every_n_epochs: 1
+  preload: null
+
+paths:
+  output_dir: outputs/en_hi
+  model_basename: tmodel_
+  tokenizer_pattern: tokenizers/tokenizer_{lang}.json
+
+tensorboard:
+  enabled: true
+  log_dir: runs
+  flush_secs: 30
+  log_hparams: true
+
+wandb:
+  enabled: false
+  project: transformer-en-hi
+  entity: null
+  run_name: null
+  log_every_n_steps: 10
+  log_val_samples: true
+
+monitoring:
+  status_file: status.json
+  heartbeat_every_n_steps: 50
+  log_file: train.log
+  webhook_url: null
+  webhook_type: slack
+  alert_on_epoch_end: true
+  alert_on_start: true
+  alert_on_finish: true

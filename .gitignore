@@ -1,0 +1,10 @@
+.venv/
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+outputs/
+*.pt
+.DS_Store
+.ipynb_checkpoints/
+nohup.out
