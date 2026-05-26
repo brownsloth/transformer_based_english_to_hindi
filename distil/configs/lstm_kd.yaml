@@ -10,8 +10,8 @@ teacher:
   artifacts_dir: /workspace/outputs/en_hi
 
 student:
-  embed_dim: 256
-  hidden_dim: 256
+  embed_dim: 128
+  hidden_dim: 128
   encoder_layers: 2
   decoder_layers: 2
   dropout: 0.2

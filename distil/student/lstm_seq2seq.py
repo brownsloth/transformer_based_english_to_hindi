@@ -75,7 +75,10 @@ class LSTMSeq2Seq(nn.Module):
             batch_first=True,
             dropout=dec_dropout,
         )
-        self.out = nn.Linear(hidden_dim, tgt_vocab)
+        if embed_dim != hidden_dim:
+            raise ValueError("embed_dim must equal hidden_dim for tied output embeddings")
+        self.out = nn.Linear(hidden_dim, tgt_vocab, bias=False)
+        self.out.weight = self.tgt_embed.weight
         self.dropout = nn.Dropout(dropout)
 
     def _encode(
@@ -87,7 +90,9 @@ class LSTMSeq2Seq(nn.Module):
                 embedded, src_lengths.cpu(), batch_first=True, enforce_sorted=False
             )
             enc_out_packed, (h, c) = self.encoder(packed)
-            enc_out, _ = nn.utils.rnn.pad_packed_sequence(enc_out_packed, batch_first=True)
+            enc_out, _ = nn.utils.rnn.pad_packed_sequence(
+                enc_out_packed, batch_first=True, total_length=src.size(1)
+            )
         else:
             enc_out, (h, c) = self.encoder(embedded)
 

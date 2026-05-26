@@ -20,8 +20,8 @@ class TeacherConfig:
 
 @dataclass
 class StudentConfig:
-    embed_dim: int = 256
-    hidden_dim: int = 256
+    embed_dim: int = 128
+    hidden_dim: int = 128
     encoder_layers: int = 2
     decoder_layers: int = 2
     dropout: float = 0.2
