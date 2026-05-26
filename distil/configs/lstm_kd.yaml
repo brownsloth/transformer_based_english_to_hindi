@@ -1,0 +1,45 @@
+# LSTM student + KD from transformer teacher (Path D)
+# RunPod: batch 128-256, ~2-4h on L40S for 25 epochs
+
+seed: 42
+
+teacher:
+  yaml_path: configs/runpod_en_hi.yaml
+  checkpoint: "8"
+  # Override on RunPod if needed:
+  artifacts_dir: /workspace/outputs/en_hi
+
+student:
+  embed_dim: 256
+  hidden_dim: 256
+  encoder_layers: 2
+  decoder_layers: 2
+  dropout: 0.2
+  seq_len: 128
+
+distillation:
+  temperature: 3.0
+  alpha: 0.7          # 0.6 KD + 0.4 CE — raise alpha to lean on teacher more
+
+data:
+  dataset_name: Helsinki-NLP/opus-100
+  lang_src: en
+  lang_tgt: hi
+  train_split_ratio: 0.9
+  batch_size: 128
+  num_workers: 8
+  truncate_long: true
+
+training:
+  num_epochs: 25
+  lr: 0.001
+  label_smoothing: 0.05
+  grad_clip: 1.0
+  amp: true
+  save_every_n_epochs: 1
+  preload: null
+  val_bleu_samples: 200
+
+paths:
+  output_dir: distil/outputs/lstm_kd
+  student_basename: lstm_

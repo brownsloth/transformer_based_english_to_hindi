@@ -4,6 +4,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 outputs/
+serving/artifacts/*
+!serving/artifacts/.gitkeep
+distil/outputs/
 *.pt
 .DS_Store
 .ipynb_checkpoints/
