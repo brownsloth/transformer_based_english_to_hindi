@@ -1,0 +1,2 @@
+// Rename/copy to config.js when deploying frontend to Netlify
+window.HINDI_JINNIE_API = "https://YOUR-API-URL.runpod.io";

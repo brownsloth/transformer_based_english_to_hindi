@@ -1,0 +1,34 @@
+# Paths relative to repo root unless SERVE_ARTIFACTS_DIR is set.
+
+data:
+  lang_src: en
+  lang_tgt: hi
+
+paths:
+  artifacts_dir: serving/artifacts
+  tokenizer_pattern: tokenizers/tokenizer_{lang}.json
+
+# Fast: ~8.8M LSTM student (dict fine-tune), fp16 — good for short phrases on CPU.
+fast:
+  label: fast
+  description: LSTM student (dict_14 fp16)
+  type: lstm_student
+  weights: student/dict_14_fp16.pt
+  seq_len: 128
+  embed_dim: 128
+  hidden_dim: 128
+  encoder_layers: 2
+  decoder_layers: 2
+
+# Accurate: ~90M transformer teacher, dynamic int8 linear — best quality on CPU.
+accurate:
+  label: accurate
+  description: Transformer teacher (tmodel_10 int8 linear)
+  type: transformer_teacher
+  weights: teacher/tmodel_10_dynamic_int8_linear.pt
+  d_model: 512
+  num_layers: 6
+  num_heads: 8
+  d_ff: 2048
+  dropout: 0.1
+  seq_len: 450

@@ -1,0 +1,129 @@
+:root {
+  --ink: #1a1a1a;
+  --muted: #666;
+  --border: #222;
+  --bg: #faf9f6;
+  --box-bg: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.label,
+.title {
+  font-family: "Caveat", cursive;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.label {
+  font-size: 1.75rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  margin-top: 0.5rem;
+}
+
+.box {
+  width: 100%;
+  border: 2.5px solid var(--border);
+  border-radius: 28px;
+  background: var(--box-bg);
+  padding: 1.25rem 1.5rem;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.06);
+}
+
+.input-box {
+  resize: vertical;
+  min-height: 72px;
+  font-family: "Inter", sans-serif;
+  outline: none;
+}
+
+.input-box:focus {
+  box-shadow: 2px 3px 0 rgba(0, 0, 0, 0.06), 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.output-box {
+  min-height: 120px;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  word-break: break-word;
+}
+
+.output-box.loading {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.output-box.error {
+  color: #b00020;
+}
+
+.placeholder {
+  opacity: 0.55;
+}
+
+.mode-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+  align-self: flex-start;
+}
+
+.mode-select {
+  width: 100%;
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  background: var(--box-bg);
+  padding: 0.65rem 1rem;
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.mode-select:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding-top: 2rem;
+  }
+  .box {
+    border-radius: 22px;
+  }
+}
