@@ -21,6 +21,9 @@ MODE_ARGS=(--lightweight --tarball)
 if [[ "${FULL:-0}" == "1" ]]; then
   MODE_ARGS=(--bleu-samples 200 --val-examples 50 --phrase-mode all --tarball)
 fi
+if [[ "${QUANTIZE:-0}" == "1" ]]; then
+  MODE_ARGS+=(--quantize)
+fi
 
 EXTRA=()
 if [[ "${INCLUDE_ALL_TEACHER:-0}" == "1" ]]; then

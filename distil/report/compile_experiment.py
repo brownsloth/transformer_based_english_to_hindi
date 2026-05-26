@@ -620,6 +620,17 @@ def write_report_md(
             "- Beam search at inference (+2–5 BLEU)",
             "- BPE tokenization to shrink embeddings",
             "",
+            "## Quantization",
+            "",
+            "Run separately or with `--quantize` on this script:",
+            "",
+            "```bash",
+            "python distil/quantize_teacher.py --checkpoint 10 --eval-mode phrases --save-models",
+            "python distil/quantize_student.py --checkpoint latest --save-models",
+            "```",
+            "",
+            "Results land in `quantized/quant_compare_teacher_*.csv` and `quant_compare_dict_*.csv`.",
+            "",
             "## Local setup after download",
             "",
             "```bash",
@@ -667,6 +678,66 @@ def create_tarball(export_dir: Path, tarball_path: Path) -> None:
         tar.add(export_dir, arcname=export_dir.name)
 
 
+def run_quantization_exports(export_dir: Path, args, teacher_artifacts: str) -> float:
+    """Run teacher + student quant comparison on CPU."""
+    import subprocess
+
+    quant_dir = export_dir / "quantized"
+    quant_dir.mkdir(parents=True, exist_ok=True)
+    py = sys.executable
+    qmethods = ["fp32_baseline", "fp16", "dynamic_int8_linear"]
+
+    print("\n=== Quantization comparison (CPU) ===")
+    t0 = time.perf_counter()
+
+    subprocess.run(
+        [
+            py,
+            str(ROOT / "distil/quantize_teacher.py"),
+            "--teacher-artifacts",
+            teacher_artifacts,
+            "--checkpoint",
+            args.teacher_checkpoint,
+            "--num-samples",
+            "50",
+            "--eval-mode",
+            "phrases",
+            "--methods",
+            *qmethods,
+            "--output-dir",
+            str(quant_dir),
+            "--save-models",
+        ],
+        check=False,
+    )
+    subprocess.run(
+        [
+            py,
+            str(ROOT / "distil/quantize_student.py"),
+            "--config",
+            str(ROOT / "distil/configs/lstm_kd_dict.yaml"),
+            "--teacher-artifacts",
+            teacher_artifacts,
+            "--checkpoint",
+            "latest",
+            "--dict-max-src-words",
+            str(args.dict_max_src_words),
+            "--num-samples",
+            "50",
+            "--methods",
+            *qmethods,
+            "--output-dir",
+            str(quant_dir),
+            "--save-models",
+        ],
+        check=False,
+    )
+
+    elapsed = round(time.perf_counter() - t0, 1)
+    print(f"Quantization exports finished in {elapsed}s → {quant_dir}")
+    return elapsed
+
+
 def latest_checkpoint_epoch(config_path: str, teacher_artifacts: str) -> int | None:
     cfg = load_distil_config(config_path)
     cfg.teacher.artifacts_dir = teacher_artifacts
@@ -700,6 +771,11 @@ def main() -> None:
         "--skip-bleu",
         action="store_true",
         help="Skip corpus BLEU; use phrase benchmark as primary metric",
+    )
+    p.add_argument(
+        "--quantize",
+        action="store_true",
+        help="Run teacher+student quant comparison (CPU, phrase eval, ~15-40 min)",
     )
     args = p.parse_args()
 
@@ -883,6 +959,11 @@ def main() -> None:
         "timings": timings,
     }
     (export_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    if args.quantize:
+        timings["quantization_seconds"] = run_quantization_exports(
+            export_dir, args, str(teacher_artifacts)
+        )
 
     write_report_md(
         export_dir,

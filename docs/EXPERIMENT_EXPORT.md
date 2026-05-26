@@ -34,6 +34,41 @@ Environment variables:
 | `TEACHER_CKPT` | `10` | Teacher epoch for phrase eval |
 | `DICT_MAX_SRC_WORDS` | `3` | Match dict training filter |
 | `FULL` | `0` | Set `1` for corpus BLEU export |
+| `QUANTIZE` | `0` | Set `1` to include teacher+student quant comparison in bundle |
+
+### Quantization (standalone or in export)
+
+Teacher (~50M transformer) — runs on **CPU**:
+
+```bash
+python distil/quantize_teacher.py \
+  --teacher-artifacts /workspace/outputs/en_hi \
+  --checkpoint 10 \
+  --eval-mode phrases \
+  --methods fp32_baseline fp16 dynamic_int8_linear \
+  --save-models
+```
+
+Student (dict checkpoint):
+
+```bash
+python distil/quantize_student.py \
+  --config distil/configs/lstm_kd_dict.yaml \
+  --checkpoint latest \
+  --teacher-artifacts /workspace/outputs/en_hi \
+  --dict-max-src-words 3 \
+  --num-samples 50 \
+  --methods fp32_baseline fp16 dynamic_int8_linear \
+  --save-models
+```
+
+Or include in export bundle:
+
+```bash
+QUANTIZE=1 bash distil/report/run_on_runpod.sh
+```
+
+Outputs: `quantized/quant_compare_teacher_10.csv`, `quant_compare_dict_08.csv`, saved models under `quantized/models/`.
 
 ### Lightweight vs full
 
