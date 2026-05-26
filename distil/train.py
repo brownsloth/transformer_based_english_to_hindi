@@ -27,6 +27,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--epochs", type=int, default=None)
     p.add_argument("--alpha", type=float, default=None, help="KD weight (0-1)")
     p.add_argument("--preload", default=None)
+    p.add_argument("--preload-path", default=None, help="Fine-tune from full checkpoint path")
+    p.add_argument("--max-src-words", type=int, default=None)
+    p.add_argument("--max-tgt-words", type=int, default=None)
     return p.parse_args()
 
 
@@ -43,6 +46,12 @@ def apply_overrides(cfg: DistilRunConfig, args: argparse.Namespace) -> DistilRun
         cfg.distillation.alpha = args.alpha
     if args.preload is not None:
         cfg.training.preload = args.preload
+    if args.preload_path:
+        cfg.training.preload_path = args.preload_path
+    if args.max_src_words is not None:
+        cfg.data.max_src_words = args.max_src_words
+    if args.max_tgt_words is not None:
+        cfg.data.max_tgt_words = args.max_tgt_words
     return cfg
 
 

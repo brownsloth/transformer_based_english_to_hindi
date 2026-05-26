@@ -1,0 +1,46 @@
+# Fine-tune LSTM student on 1–2 word English phrases (dictionary mode).
+# Start from general KD checkpoint, specialize on short pairs.
+
+seed: 42
+
+teacher:
+  yaml_path: configs/runpod_en_hi.yaml
+  checkpoint: "10"
+  artifacts_dir: /workspace/outputs/en_hi
+
+student:
+  embed_dim: 128
+  hidden_dim: 128
+  encoder_layers: 2
+  decoder_layers: 2
+  dropout: 0.2
+  seq_len: 128
+
+distillation:
+  temperature: 3.0
+  alpha: 0.4          # lean on ground-truth for exact short translations
+
+data:
+  dataset_name: Helsinki-NLP/opus-100
+  lang_src: en
+  lang_tgt: hi
+  train_split_ratio: 0.9
+  batch_size: 256
+  num_workers: 8
+  truncate_long: true
+  min_src_words: 1
+  max_src_words: 2
+  max_tgt_words: 8    # Hindi can be longer for 2 English words
+
+training:
+  num_epochs: 15
+  lr: 0.0003          # lower LR for fine-tune
+  label_smoothing: 0.0
+  grad_clip: 1.0
+  amp: true
+  save_every_n_epochs: 1
+  preload_path: distil/outputs/lstm_kd/weights/lstm_09.pt
+
+paths:
+  output_dir: distil/outputs/lstm_dict
+  student_basename: dict_

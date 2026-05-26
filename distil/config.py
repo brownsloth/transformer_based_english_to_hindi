@@ -44,6 +44,10 @@ class DistilDataConfig:
     num_workers: int = 8
     truncate_long: bool = True
     max_train_samples: int | None = None
+    # Keep pairs where source/target word counts are within these bounds (dictionary mode).
+    min_src_words: int | None = None
+    max_src_words: int | None = None
+    max_tgt_words: int | None = None
 
 
 @dataclass
@@ -55,6 +59,7 @@ class DistilTrainingConfig:
     amp: bool = True
     save_every_n_epochs: int = 1
     preload: str | None = None
+    preload_path: str | None = None  # full path to .pt; loads weights only (fine-tune)
     val_bleu_samples: int = 200
 
 

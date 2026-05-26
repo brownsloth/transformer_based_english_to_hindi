@@ -111,7 +111,12 @@ class DistillationTrainer:
         scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
         initial_epoch = 0
-        if tcfg.preload:
+        if tcfg.preload_path:
+            path = Path(tcfg.preload_path)
+            state = torch.load(path, map_location=self.device, weights_only=False)
+            student.load_state_dict(state["model_state_dict"])
+            logger.info("Fine-tune: loaded student weights from %s", path)
+        elif tcfg.preload:
             path = cfg.student_weights_path(tcfg.preload)
             state = torch.load(path, map_location=self.device, weights_only=False)
             student.load_state_dict(state["model_state_dict"])
