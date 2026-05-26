@@ -1,0 +1,43 @@
+# Phrase benchmark for experiment report (en → hi)
+# One phrase per line; used for teacher vs student qualitative comparison.
+
+water
+hello
+good morning
+good afternoon
+good evening
+good night
+thank you
+please
+sorry
+yes
+no
+how are you
+i am fine
+i love you
+take care
+have fun
+goodbye
+see you
+nice to meet you
+what is your name
+where are you
+help
+food
+friend
+love
+stop
+wait
+come
+go
+another one
+sky is blue
+just do it
+the weather is nice today
+where is the train station
+i want to learn hindi
+good luck
+happy birthday
+how much does it cost
+i don't understand
+speak slowly
